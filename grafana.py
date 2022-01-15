@@ -1,9 +1,6 @@
 import os
 import time
 import requests
-import logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("grafana")
 
 def get_latest_tvl_total():
     # TODO read query definition from grafana panel id
@@ -58,10 +55,8 @@ def _ds_query(key, query):
         )
         res = response.json()
         values = res['results']['A']['frames'][0]['data']['values'][1]
-        logger.debug(values)
         for i in range(len(values)-1, -1, -1):
             value = values[i]
-            logger.debug(value)
             if value > 0:
                 return { key: value }
 
