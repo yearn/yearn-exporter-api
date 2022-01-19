@@ -1,5 +1,5 @@
 # yearn-exporter-api
-Light-weight API in front of [yearn.vision](yearn.vision) that makes some data available for external sites.
+Light-weight API in front of [yearn.vision](https://yearn.vision) that makes some data available for external sites.
 
 ## Routes
 
