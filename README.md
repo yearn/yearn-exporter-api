@@ -7,7 +7,7 @@ Light-weight API in front of [yearn.vision](https://yearn.vision) that makes som
 returns the summed up TVLs grouped by network and a summed total:
 ```
 {
-  "timestamp":1642600346,
+  "ts":1642600346,
   "tvl_eth":5101043121.68,
   "tvl_ftm":533590588.63,
   "tvl_total":533590588.63,
@@ -19,7 +19,7 @@ returns the summed up TVLs grouped by network and a summed total:
 returns the tvl for the given network, e.g. for `ETH`:
 ```
 {
-  "timestamp":1642600393,
+  "ts":1642600393,
   "tvl_eth":5101041358.88,
   "unit":"USD"
 }
@@ -33,7 +33,7 @@ supported networks are:
 returns the sum of the TVLs of all networks:
 ```
 {
-  "timestamp":1642600475,
+  "ts":1642600475,
   "tvl_total":534919919.17,
   "unit":"USD"
 }

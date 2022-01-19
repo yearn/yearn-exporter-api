@@ -39,7 +39,7 @@ def _ds_query(key, query, ts, unit):
         ts = int(time.time())
 
     if ts < 1581467400: # yearn inception 2020-02-12
-        return { key: 0, 'timestamp': ts, 'unit': unit }
+        return { key: 0, 'ts': ts, 'unit': unit }
 
     to_millis = int(ts * 1e3)
     from_millis = int(to_millis - 600 * 1e3)
@@ -71,7 +71,6 @@ def _ds_query(key, query, ts, unit):
         )
         res = response.json()
         data = res['results']['A']['frames'][0]['data']
-        timestamps = data['values'][0]
         values = data['values'][1]
         value = 0
         for i in range(len(values)-1, -1, -1):
@@ -79,4 +78,4 @@ def _ds_query(key, query, ts, unit):
                 value = round(values[i], 2)
                 break
 
-        return { key: value, 'timestamp': ts, 'unit': unit }
+        return { key: value, 'ts': ts, 'unit': unit }
