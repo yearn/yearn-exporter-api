@@ -52,12 +52,9 @@ def _ds_query(key, query, ts):
         'Cache-Control': 'no-cache'
     }
 
-    # TODO make this more stable accross new deployments
-    # this could be done by an authed call to api/datasources to get the uid
     data = {
         "queries": [
             {
-                "datasource": { "uid": "PBFE396EC0B189D67", "type": "prometheus" },
                 "expr": query,
                 "utcOffsetSec": 0,
                 "datasourceId": 1
