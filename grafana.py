@@ -29,14 +29,14 @@ queries = {
     'tvl_ftm': QUERY_FTM_TVL
 }
 
-def get_for(key, ts):
+def get_for(key, ts, unit):
     if key not in queries:
         raise ValueError(f"No query found for key {key}!")
 
-    return _ds_query(key, queries[key], ts)
+    return _ds_query(key, queries[key], ts, unit)
 
 
-def _ds_query(key, query, ts):
+def _ds_query(key, query, ts, unit):
     base_url = os.environ["DS_QUERY_BASE_URL"]
     if not ts:
         ts = int(time.time())
@@ -79,4 +79,4 @@ def _ds_query(key, query, ts):
                 value = values[i]
                 break
 
-        return { key: value, 'timestamp': ts }
+        return { key: value, 'timestamp': ts, 'unit': unit }
