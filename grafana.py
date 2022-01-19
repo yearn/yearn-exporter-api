@@ -41,6 +41,9 @@ def _ds_query(key, query, ts, unit):
     if not ts:
         ts = int(time.time())
 
+    if ts < 1581467400: # yearn inception 2020-02-12
+        return { key: 0, 'timestamp': ts, 'unit': unit }
+
     to_millis = int(ts * 1e3)
     from_millis = int(to_millis - 600 * 1e3)
 
