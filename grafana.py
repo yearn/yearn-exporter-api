@@ -76,7 +76,7 @@ def _ds_query(key, query, ts, unit):
         value = 0
         for i in range(len(values)-1, -1, -1):
             if values[i] > 0:
-                value = values[i]
+                value = round(values[i], 2)
                 break
 
         return { key: value, 'timestamp': ts, 'unit': unit }
