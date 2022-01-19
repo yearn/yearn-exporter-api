@@ -1,29 +1,48 @@
 import os
 import time
 import requests
+import logging
+logger = logging.getLogger('grafana')
+logging.basicConfig(level=logging.DEBUG)
 
-def get_latest_tvl_total():
-    # TODO read query definition from grafana panel id
-    query = "(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0)) + (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(ironbank{network=\"ETH\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0)) + (sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0)) + (sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0))"
-    return _ds_query("tvl_total", query)
+# TODO check the queries are correct
+QUERY_DELEGATED = """(sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
+group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
+
+QUERY_FTM_TVL = """(sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0))
++ (sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0))
+- (sum((yearn_strategy{network=\"FTM\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
+group_left yearn_vault{network=\"FTM\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
+
+QUERY_ETH_TVL = """(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0))
++ (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0))
++ (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0))
++ (sum(ironbank{network=\"ETH\", param=\"tvl\"}) or vector(0))
+- (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
+group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
+
+QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
+
+queries = {
+    'tvl_total': QUERY_TOTAL_TVL,
+    'tvl_eth': QUERY_ETH_TVL,
+    'tvl_ftm': QUERY_FTM_TVL
+}
+
+def get_for(key, ts):
+    if key not in queries:
+        raise ValueError(f"No query found for key {key}!")
+
+    return _ds_query(key, queries[key], ts)
 
 
-def get_latest_tvl_eth():
-    # TODO read query definition from grafana panel id
-    query = "(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0)) + (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(ironbank{network=\"ETH\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0))"
-    return _ds_query("tvl_eth", query)
-
-
-def get_latest_tvl_ftm():
-    # TODO read query definition from grafana panel id
-    query = "(sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0)) + (sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0))"
-    return _ds_query("tvl_ftm", query)
-
-
-def _ds_query(key, query):
+def _ds_query(key, query, ts):
     base_url = os.environ["DS_QUERY_BASE_URL"]
-    to_millis = int(time.time() * 1000)
-    from_millis = int(to_millis - 300 * 1000)
+    if not ts:
+        ts = int(time.time())
+
+    to_millis = int(ts * 1e3)
+    from_millis = int(to_millis - 600 * 1e3)
 
     url = f'{base_url}/api/ds/query'
     headers = {
@@ -54,10 +73,13 @@ def _ds_query(key, query):
             json = data
         )
         res = response.json()
-        values = res['results']['A']['frames'][0]['data']['values'][1]
+        data = res['results']['A']['frames'][0]['data']
+        timestamps = data['values'][0]
+        values = data['values'][1]
+        value = 0
         for i in range(len(values)-1, -1, -1):
-            value = values[i]
-            if value > 0:
-                return { key: value }
+            if values[i] > 0:
+                value = values[i]
+                break
 
-        raise ValueError(f"Failed to get the latest value for the key '{key}'!")
+        return { key: value, 'timestamp': ts }
