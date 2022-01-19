@@ -3,28 +3,33 @@ from grafana import get_for
 
 app = Flask(__name__)
 
+NETWORKS = ['eth', 'ftm']
+
 UNIT_USD = 'USD'
 
 @app.route("/tvl", methods=['GET'])
 def tvl():
     ts = _get_ts()
-    res = get_for('tvl_total', ts, UNIT_USD) | get_for('tvl_eth', ts, UNIT_USD) | get_for('tvl_ftm', ts, UNIT_USD)
+    res = get_for('tvl_total', ts, UNIT_USD)
+    for network in NETWORKS:
+        key = f"tvl_{network.lower()}"
+        res = res | get_for(key, ts, UNIT_USD)
     return jsonify(res)
 
 
-@app.route("/tvl_total", methods=['GET'])
+@app.route("/tvl/total", methods=['GET'])
 def tvl_total():
     return jsonify(get_for('tvl_total', _get_ts(), UNIT_USD))
 
 
-@app.route("/tvl_eth", methods=['GET'])
-def tvl_eth():
-    return jsonify(get_for('tvl_eth', _get_ts(), UNIT_USD))
+@app.route("/tvl/<network>", methods=['GET'])
+def tvl_network(network):
+    if network and network.lower() not in NETWORKS:
+        return "Network not found!", 400
 
-
-@app.route("/tvl_ftm", methods=['GET'])
-def tvl_ftm():
-    return jsonify(get_for('tvl_ftm', _get_ts(), UNIT_USD))
+    key = f"tvl_{network.lower()}"
+    res = get_for(key, _get_ts(), UNIT_USD)
+    return jsonify(res)
 
 
 def _get_ts():
