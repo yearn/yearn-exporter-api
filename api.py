@@ -8,7 +8,6 @@ UNIT_USD = 'USD'
 @app.route("/tvl", methods=['GET'])
 def tvl():
     ts = _get_ts()
-    unit = 'USD'
     res = get_for('tvl_total', ts, UNIT_USD) | get_for('tvl_eth', ts, UNIT_USD) | get_for('tvl_ftm', ts, UNIT_USD)
     return jsonify(res)
 
