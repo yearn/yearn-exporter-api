@@ -6,9 +6,6 @@ logger = logging.getLogger('grafana')
 logging.basicConfig(level=logging.DEBUG)
 
 # TODO check the queries are correct
-QUERY_DELEGATED = """(sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
-group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
-
 QUERY_FTM_TVL = """(sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0))
 + (sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0))
 - (sum((yearn_strategy{network=\"FTM\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
