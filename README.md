@@ -6,13 +6,23 @@ Light-weight API in front of [yearn.vision](yearn.vision) that makes some data a
 ### `/tvl`
 returns the summed up TVLs grouped by network and a summed total:
 ```
-{"timestamp":1642600346,"tvl_eth":5101043121.68,"tvl_ftm":533590588.63,"tvl_total":533590588.63,"unit":"USD"}
+{
+  "timestamp":1642600346,
+  "tvl_eth":5101043121.68,
+  "tvl_ftm":533590588.63,
+  "tvl_total":533590588.63,
+  "unit":"USD"
+}
 ```
 
 ### `/tvl/<network>`
 returns the tvl for the given network, e.g. for `ETH`:
 ```
-{"timestamp":1642600393,"tvl_eth":5101041358.88,"unit":"USD"}
+{
+  "timestamp":1642600393,
+  "tvl_eth":5101041358.88,
+  "unit":"USD"
+}
 ```
 supported networks are:
 - `ETH`
@@ -22,7 +32,11 @@ supported networks are:
 ### `/tvl/total`
 returns the sum of the TVLs of all networks:
 ```
-{"timestamp":1642600475,"tvl_total":534919919.17,"unit":"USD"}
+{
+  "timestamp":1642600475,
+  "tvl_total":534919919.17,
+  "unit":"USD"
+}
 ```
 
 
