@@ -34,7 +34,7 @@ def get_for(key, ts, unit):
 
 
 def _ds_query(key, query, ts, unit):
-    base_url = os.environ["DS_QUERY_BASE_URL"]
+    base_url = os.environ["BASE_URL"]
     if not ts:
         ts = int(time.time())
 
