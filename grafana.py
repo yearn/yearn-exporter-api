@@ -2,7 +2,7 @@ import os
 import requests
 import logging
 logger = logging.getLogger('grafana')
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARN)
 
 # TODO check the queries are correct
 QUERY_FTM_TVL = """(sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0))
