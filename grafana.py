@@ -1,5 +1,4 @@
 import os
-import time
 import requests
 import logging
 logger = logging.getLogger('grafana')
@@ -35,8 +34,6 @@ def get_for(key, ts, unit):
 
 def _ds_query(key, query, ts, unit):
     base_url = os.environ["BASE_URL"]
-    if not ts:
-        ts = int(time.time())
 
     if ts < 1581467400: # yearn inception 2020-02-12
         return { key: 0, 'ts': ts, 'unit': unit }

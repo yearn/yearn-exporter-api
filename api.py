@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import time
 from grafana import get_for
 
 app = Flask(__name__)
@@ -35,7 +36,7 @@ def tvl_network(network):
 def _get_ts():
     ts = request.args.get('ts', None)
     if not ts:
-        return None
+        return int(time.time())
     try:
         ts_int = int(ts)
         if ts_int > 0:
