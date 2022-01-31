@@ -4,18 +4,13 @@ import logging
 logger = logging.getLogger('grafana')
 logging.basicConfig(level=logging.WARN)
 
-# TODO check the queries are correct
-QUERY_FTM_TVL = """(sum(ironbank{network=\"FTM\", param=\"tvl\"}) or vector(0))
-+ (sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0))
-- (sum((yearn_strategy{network=\"FTM\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
-group_left yearn_vault{network=\"FTM\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
+# Explanation of query
+# sum v2 vaults - sum of v2 vault funds deposited into other vaults
+QUERY_FTM_TVL = """(sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"FTM\", param=\"delegatedAssets\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"FTM\", param=\"token price\"}) or vector(0))"""
 
-QUERY_ETH_TVL = """(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0))
-+ (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0))
-+ (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0))
-+ (sum(ironbank{network=\"ETH\", param=\"tvl\"}) or vector(0))
-- (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\", experimental=\"false\"} / 1000000000000000000 > 0) * on(vault, version)
-group_left yearn_vault{network=\"ETH\", param=\"token price\", experimental=\"false\"}) or vector(0))"""
+# Explanation of query everything below is only on eth
+# Sum of v1 vaults + sum of v2 vaults + sum of earn - sum of v2 vault funds deposited into other v2 vaults + veCRV holdings
+QUERY_ETH_TVL = """(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"ETH\", param=\"token price\"}) or vector(0)) + (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0))"""
 
 QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
 
