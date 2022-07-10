@@ -14,24 +14,47 @@ QUERY_ETH_TVL = """(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (
 
 QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
 
+# Partner queries
+# Count of unique entries in the partner field
+QUERY_PAR_CNT = """(count(count(partners) by (partner)) or vector(0))"""
+# Sum of the payouts measured in USD up-to-date
+QUERY_PAR_TOTAL = """(sum(partners{param=\"payout_usd_total\"}) or vector(0))"""
+# Get individual payouts data
+QUERY_PAR_INDIV = """(partners{{partner=\"{0}\", param=\"{1}\"}})"""
+
 queries = {
     'tvl_total': QUERY_TOTAL_TVL,
     'tvl_eth': QUERY_ETH_TVL,
-    'tvl_ftm': QUERY_FTM_TVL
+    'tvl_ftm': QUERY_FTM_TVL,
+    'partners_count': QUERY_PAR_CNT,
+    'partners_total': QUERY_PAR_TOTAL,
 }
+
 
 def get_for(key, ts, unit):
     if key not in queries:
         raise ValueError(f"No query found for key {key}!")
 
-    return _ds_query(key, queries[key], ts, unit)
-
-
-def _ds_query(key, query, ts, unit):
-    base_url = os.environ["BASE_URL"]
-
     if ts < 1581467400: # yearn inception 2020-02-12
         return { key: 0, 'ts': ts, 'unit': unit }
+
+    res = _ds_query(queries[key], ts)
+    return { key: _ds_parse_value(res), 'ts': ts, 'unit': unit}
+
+
+def _ds_parse_value(response):
+    data = response['results']['A']['frames'][0]['data']
+    values = data['values'][1]
+    value = 0
+    for i in range(len(values)-1, -1, -1):
+        if values[i] > 0:
+            value = round(values[i], 2)
+            break
+    return value
+
+
+def _ds_query(query, ts):
+    base_url = os.environ["BASE_URL"]
 
     to_millis = int(ts * 1e3)
     from_millis = int(to_millis - 600 * 1e3)
@@ -61,13 +84,44 @@ def _ds_query(key, query, ts, unit):
             headers = headers,
             json = data
         )
-        res = response.json()
-        data = res['results']['A']['frames'][0]['data']
-        values = data['values'][1]
+    return response.json()
+
+
+def _ds_parse_partners(response):
+    data = response['results']['A']['frames']
+    output = {}
+    for series in data:
+        values = series['data']['values'][1]
         value = 0
         for i in range(len(values)-1, -1, -1):
             if values[i] > 0:
                 value = round(values[i], 2)
                 break
+        labels = series['schema']['fields'][1]['labels']
+        output[labels['token_address']] = value
+    return output
 
-        return { key: value, 'ts': ts, 'unit': unit }
+
+def get_partners_for(partner, param, ts, unit):
+    if ts < 1581467400: # yearn inception 2020-02-12
+        return { key: 0, 'ts': ts, 'unit': unit }
+
+    allowed_params = [
+        "balance",
+        "balance_usd",
+        "payout_daily",
+        "payout_weekly",
+        "payout_monthly",
+        "payout_total",
+        "payout_usd_daily",
+        "payout_usd_weekly",
+        "payout_usd_monthly",
+        "payout_usd_total",
+    ]
+    if param not in allowed_params:
+        raise ValueError(f"No query available for param {param}!")
+
+    key = f'partners_indiv_{partner.lower()}_{param.lower()}'
+    query = QUERY_PAR_INDIV.format(partner, param)
+    res = _ds_query(query, ts)
+    return { key: _ds_parse_partners(res), 'ts': ts, 'unit': unit }

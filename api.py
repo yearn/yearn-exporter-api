@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 import time
-from grafana import get_for
+from grafana import get_for, get_partners_for
 
 app = Flask(__name__)
 
@@ -30,6 +30,22 @@ def tvl_network(network):
 
     key = f"tvl_{network.lower()}"
     res = get_for(key, _get_ts(), UNIT_USD)
+    return jsonify(res)
+
+
+@app.route("/partners/total", methods=['GET'])
+def partners_total():
+    return jsonify(get_for('partners_total', _get_ts(), UNIT_USD))
+
+
+@app.route("/partners/count", methods=['GET'])
+def partners_count():
+    return jsonify(get_for('partners_count', _get_ts(), ''))
+
+
+@app.route("/partners/<partner>/<param>", methods=['GET'])
+def partners_indiv(partner, param):
+    res = get_partners_for(partner, param, _get_ts(), UNIT_USD)
     return jsonify(res)
 
 
