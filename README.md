@@ -49,10 +49,10 @@ $ curl localhost:5000/tvl/total
   "unit":"USD"
 }
 ```
-### `partners/{query}`
+### `/partners/{query}`
 returns b2b fee-sharing partners info
 
-#### `partners/total`
+#### `/partners/total`
 returns the total fees to be paid out to-date, measured in USD value from all chains:
 ```
 $ curl localhost:5000/partners/total
