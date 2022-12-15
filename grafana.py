@@ -19,7 +19,7 @@ QUERY_OPT_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl
 
 QUERY_ARB_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARRB\"}))"""
 
-QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
+QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPT_TVL + " + " + QUERY_ARB_TVL
 
 # Partner queries
 # Count of unique entries in the partner field
