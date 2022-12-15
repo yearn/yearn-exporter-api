@@ -73,7 +73,7 @@ $ curl localhost:5000/partners/count
 }
 ```
 #### `/partners/<partner>/<param>`
-returns for a specific partner the paramater you specify:
+returns for a specific partner the parameter you specify:
   - paramaters are: allowed_params: `balance`, `balance_usd`, `payout_daily`, `payout_weekly`, `payout_monthly`, `payout_total`, `payout_usd_daily`, `payout_usd_weekly`, `payout_usd_monthly`, `payout_usd_total`
   - partners are the names of the b2b partners
  

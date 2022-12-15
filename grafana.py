@@ -19,11 +19,13 @@ QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
 
 # Partner queries
 # Count of unique entries in the partner field
-QUERY_PAR_CNT = """(count(count(partners) by (partner)) or vector(0))"""
+QUERY_PAR_CNT = """(count(count(partners) by (partner)))"""
 # Sum of the payouts measured in USD up-to-date
-QUERY_PAR_TOTAL = """(sum(partners{param=\"payout_usd_total\"}) or vector(0))"""
+QUERY_PAR_TOTAL = """(sum(partners{param=\"payout_usd_total\"}))"""
 # Get individual payouts data
 QUERY_PAR_INDIV = """(partners{{partner=\"{0}\", param=\"{1}\"}})"""
+
+
 
 queries = {
     'tvl_total': QUERY_TOTAL_TVL,
