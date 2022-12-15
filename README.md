@@ -2,7 +2,7 @@
 Light-weight API in front of [yearn.vision](https://yearn.vision) that makes some data available for external sites.
 
 ## Usage
-Start the api with `docker-compose up` or `docker-compose up -d` for detached mode. This will expose it at `http://localhost:5000`.
+Start the API with `docker-compose up` or `docker-compose up -d` for detached mode. This will expose it at `http://localhost:5000`.
 
 ## Configuration
 You can export the following environment variables if you want to override the defaults:
