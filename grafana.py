@@ -68,7 +68,7 @@ def _ds_query(query, ts):
     base_url = os.environ["BASE_URL"]
 
     to_millis = int(ts * 1e3)
-    from_millis = int(to_millis - 600 * 1e3)
+    from_millis = int(to_millis - 1800 * 1e3)
 
     url = f'{base_url}/api/ds/query'
     headers = {
