@@ -12,7 +12,7 @@ You can export the following environment variables if you want to override the d
 ## Routes
 
 ### `/tvl`
-returns the summed up TVLs grouped by network and a summed total:
+returns the summed TVLs grouped by network and a summed total:
 ```
 $ curl localhost:5000/tvl
 {
