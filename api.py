@@ -4,7 +4,7 @@ from grafana import get_for, get_partners_for
 
 app = Flask(__name__)
 
-NETWORKS = ['eth', 'ftm']
+NETWORKS = ['eth', 'ftm', 'opt', 'arb']
 
 UNIT_USD = 'USD'
 
