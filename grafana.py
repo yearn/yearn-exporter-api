@@ -35,6 +35,8 @@ queries = {
     'tvl_total': QUERY_TOTAL_TVL,
     'tvl_eth': QUERY_ETH_TVL,
     'tvl_ftm': QUERY_FTM_TVL,
+    'tvl_opt': QUERY_OPT_TVL,
+    'tvl_arb': QUERY_ARB_TVL,
     'partners_count': QUERY_PAR_CNT,
     'partners_total': QUERY_PAR_TOTAL,
 }
