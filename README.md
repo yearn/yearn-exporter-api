@@ -2,7 +2,10 @@
 Light-weight API in front of [yearn.vision](https://yearn.vision) that makes some data available for external sites.
 
 ## Usage
-Start the api with `docker-compose up` or `docker-compose up -d` for detached mode. This will expose it at `http://localhost:5000`.
+Start the API with `docker-compose up` or `docker-compose up -d` for detached mode. This will expose it at `http://localhost:5000`.
+
+## Rebuild
+Rebuild the docker container with `docker build -t ghcr.io/yearn/yearn-exporter-api .`
 
 ## Configuration
 You can export the following environment variables if you want to override the defaults:
@@ -12,7 +15,7 @@ You can export the following environment variables if you want to override the d
 ## Routes
 
 ### `/tvl`
-returns the summed up TVLs grouped by network and a summed total:
+returns the summed TVLs grouped by network and a summed total:
 ```
 $ curl localhost:5000/tvl
 {
@@ -50,10 +53,10 @@ $ curl localhost:5000/tvl/total
 }
 ```
 ### `/partners/{query}`
-returns b2b fee-sharing partners info
+returns b2b fee-sharing partners' info
 
 #### `/partners/total`
-returns the total fees to be paid out to-date, measured in USD value from all chains:
+returns the total fees to be paid out to date, measured in USD value from all chains:
 ```
 $ curl localhost:5000/partners/total
 {
@@ -73,8 +76,8 @@ $ curl localhost:5000/partners/count
 }
 ```
 #### `/partners/<partner>/<param>`
-returns for a specific partner the paramater you specify:
-  - paramaters are: allowed_params: `balance`, `balance_usd`, `payout_daily`, `payout_weekly`, `payout_monthly`, `payout_total`, `payout_usd_daily`, `payout_usd_weekly`, `payout_usd_monthly`, `payout_usd_total`
+returns for a specific partner the parameter you specify:
+  - parameters are: allowed_params: `balance`, `balance_usd`, `payout_daily`, `payout_weekly`, `payout_monthly`, `payout_total`, `payout_usd_daily`, `payout_usd_weekly`, `payout_usd_monthly`, `payout_usd_total`
   - partners are the names of the b2b partners
  
  ```

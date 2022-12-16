@@ -8,27 +8,35 @@ logger = logging.getLogger('grafana')
 logging.basicConfig(level=logging.WARN)
 
 # Explanation of query
-# sum v2 vaults - sum of v2 vault funds deposited into other vaults
-QUERY_FTM_TVL = """(sum(yearn_vault{network=\"FTM\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"FTM\", param=\"delegatedAssets\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"FTM\", param=\"token price\"}) or vector(0))"""
+# sum v2 vaults does not subtract delegated deposits
+QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"}))"""
 
 # Explanation of query everything below is only on eth
 # Sum of v1 vaults + sum of v2 vaults + sum of earn - sum of v2 vault funds deposited into other v2 vaults + veCRV holdings
-QUERY_ETH_TVL = """(sum(yearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(yearn_vault{network=\"ETH\", param=\"tvl\"}) or vector(0)) + (sum(iearn{network=\"ETH\", param=\"tvl\"}) or vector(0)) - (sum((yearn_strategy{network=\"ETH\", param=\"delegatedAssets\"} / 1000000000000000000 > 0) * on(vault, version) group_left yearn_vault{network=\"ETH\", param=\"token price\"}) or vector(0)) + (avg(yearn{network=\"ETH\", param=\"vecrv balance\"}) * avg(yearn{network=\"ETH\", param=\"crv price\"}) or vector(0))"""
+QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}))"""
 
-QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL
+QUERY_OPT_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPT\"}))"""
+
+QUERY_ARB_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARRB\"}))"""
+
+QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPT_TVL + " + " + QUERY_ARB_TVL
 
 # Partner queries
 # Count of unique entries in the partner field
-QUERY_PAR_CNT = """(count(count(partners) by (partner)) or vector(0))"""
+QUERY_PAR_CNT = """(count(count(partners) by (partner)))"""
 # Sum of the payouts measured in USD up-to-date
-QUERY_PAR_TOTAL = """(sum(partners{param=\"payout_usd_total\"}) or vector(0))"""
+QUERY_PAR_TOTAL = """(sum(partners{param=\"payout_usd_total\"}))"""
 # Get individual payouts data
 QUERY_PAR_INDIV = """(partners{{partner=\"{0}\", param=\"{1}\"}})"""
+
+
 
 queries = {
     'tvl_total': QUERY_TOTAL_TVL,
     'tvl_eth': QUERY_ETH_TVL,
     'tvl_ftm': QUERY_FTM_TVL,
+    'tvl_opt': QUERY_OPT_TVL,
+    'tvl_arb': QUERY_ARB_TVL,
     'partners_count': QUERY_PAR_CNT,
     'partners_total': QUERY_PAR_TOTAL,
 }
@@ -60,7 +68,7 @@ def _ds_query(query, ts):
     base_url = os.environ["BASE_URL"]
 
     to_millis = int(ts * 1e3)
-    from_millis = int(to_millis - 600 * 1e3)
+    from_millis = int(to_millis - 1800 * 1e3)
 
     url = f'{base_url}/api/ds/query'
     headers = {
