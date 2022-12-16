@@ -102,7 +102,11 @@ def _ds_parse_partners(response):
                 break
         labels = series['schema']['fields'][1]['labels']
         network = labels['network']
-        output[network][labels['token_address']] = value
+        output[network][labels['token_address']] = {
+            'value': value,
+            'token': labels['token'],
+            'bucket': labels['bucket'],
+        }
     return output
 
 
