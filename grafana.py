@@ -1,6 +1,9 @@
-import os
-import requests
 import logging
+import os
+from collections import defaultdict
+
+import requests
+
 logger = logging.getLogger('grafana')
 logging.basicConfig(level=logging.WARN)
 
@@ -89,7 +92,7 @@ def _ds_query(query, ts):
 
 def _ds_parse_partners(response):
     data = response['results']['A']['frames']
-    output = {}
+    output = defaultdict(dict)
     for series in data:
         values = series['data']['values'][1]
         value = 0
@@ -98,7 +101,8 @@ def _ds_parse_partners(response):
                 value = round(values[i], 2)
                 break
         labels = series['schema']['fields'][1]['labels']
-        output[labels['token_address']] = value
+        network = labels['network']
+        output[network][labels['token_address']] = value
     return output
 
 
@@ -124,4 +128,6 @@ def get_partners_for(partner, param, ts, unit):
     key = f'partners_indiv_{partner.lower()}_{param.lower()}'
     query = QUERY_PAR_INDIV.format(partner, param)
     res = _ds_query(query, ts)
+    #return res['results']['A']['frames'][0]['schema']['fields'][1]['labels']['network']
+    logger.info(res)
     return { key: _ds_parse_partners(res), 'ts': ts, 'unit': unit }
