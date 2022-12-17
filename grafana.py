@@ -98,20 +98,25 @@ def _ds_query(query, ts):
     return response.json()
 
 
-def _ds_parse_partners(response):
-    data = response['results']['A']['frames']
+def _ds_parse_partners(token_bals, usd_bals):
+    data = token_bals['results']['A']['frames']
+    usd_data = usd_bals['results']['A']['frames']
     output = defaultdict(dict)
-    for series in data:
+    for series, usd_series in zip(data, usd_data):
         values = series['data']['values'][1]
+        usd_values = usd_series['data']['values'][1]
         value = 0
+        usd_value = 0
         for i in range(len(values)-1, -1, -1):
             if values[i] > 0:
                 value = round(values[i], 2)
+                usd_value = round(usd_values[i], 2)
                 break
         labels = series['schema']['fields'][1]['labels']
         network = labels['network']
         output[network][labels['token_address']] = {
-            'value': value,
+            'balance': value,
+            'tvl': usd_value,
             'token': labels['token'],
             'bucket': labels['bucket'],
         }
@@ -122,24 +127,21 @@ def get_partners_for(partner, param, ts, unit):
     if ts < 1581467400: # yearn inception 2020-02-12
         return { key: 0, 'ts': ts, 'unit': unit }
 
-    allowed_params = [
-        "balance",
-        "balance_usd",
-        "payout_daily",
-        "payout_weekly",
-        "payout_monthly",
-        "payout_total",
-        "payout_usd_daily",
-        "payout_usd_weekly",
-        "payout_usd_monthly",
-        "payout_usd_total",
-    ]
-    if param not in allowed_params:
+    usd_queries = {
+        'balance':          'balance_usd',
+        'payout_daily':     'payout_usd_daily',
+        'payout_weekly':    'payout_usd_weekly',
+        'payout_monthly':   'payout_usd_monthly',
+        'payout_total':     'payout_usd_total',
+    }
+
+    if param not in usd_queries:
         raise ValueError(f"No query available for param {param}!")
 
     key = f'partners_indiv_{partner.lower()}_{param.lower()}'
     query = QUERY_PAR_INDIV.format(partner, param)
-    res = _ds_query(query, ts)
+    token_bals = _ds_query(query, ts)
+    query = QUERY_PAR_INDIV.format(partner, usd_queries[param])
+    usd_bals = _ds_query(query, ts)
     #return res['results']['A']['frames'][0]['schema']['fields'][1]['labels']['network']
-    logger.info(res)
-    return { key: _ds_parse_partners(res), 'ts': ts, 'unit': unit }
+    return { key: _ds_parse_partners(token_bals, usd_bals), 'ts': ts, 'unit': unit }
