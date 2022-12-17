@@ -40,7 +40,8 @@ $ curl localhost:5000/tvl/eth
 supported networks are:
 - `ETH`
 - `FTM`
-
+- `OPI`
+- `ARB`
 
 ### `/tvl/total`
 returns the sum of the TVLs of all networks:
@@ -77,16 +78,40 @@ $ curl localhost:5000/partners/count
 ```
 #### `/partners/<partner>/<param>`
 returns for a specific partner the parameter you specify:
-  - parameters are: allowed_params: `balance`, `balance_usd`, `payout_daily`, `payout_weekly`, `payout_monthly`, `payout_total`, `payout_usd_daily`, `payout_usd_weekly`, `payout_usd_monthly`, `payout_usd_total`
+  - parameters are: allowed_params: `balance`, `payout_daily`, `payout_weekly`, `payout_monthly`, `payout_total`
   - partners are the names of the b2b partners
  
  ```
- $ curl localhost:5000/partners/gb/payout_usd_monthly
-{
-  "partners_indiv_gb_payout_usd_monthly": {
-    "0xdCD90C7f6324cfa40d7169ef80b12031770B4325": 0
+ $ curl localhost:5000/partners/sturdy/payout_total
+  "partners_indiv_sturdy_payout_total": {
+    "FTM": {
+      "0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0": {
+        "balance": 2238.09,
+        "bucket": "Other short term assets",
+        "token": "yvWFTM",
+        "tvl": 1732.48
+      },
+      "0x0fBbf9848D969776a5Eb842EdAfAf29ef4467698": {
+        "balance": 15.17,
+        "bucket": "Other short term assets",
+        "token": "yvBOO",
+        "tvl": 123.41
+      },
+      "0x1e2fe8074a5ce1Bb7394856B0C618E75D823B93b": {
+        "balance": 1714.68,
+        "bucket": "Other short term assets",
+        "token": "yvfBEETS",
+        "tvl": 389.16
+      },
+      "0xf2d323621785A066E64282d2B407eAc79cC04966": {
+        "balance": 5.92,
+        "bucket": "Other short term assets",
+        "token": "yvLINK",
+        "tvl": 66.84
+      }
+    }
   },
-  "ts": 1665023175,
+  "ts": 1671244960,
   "unit": "USD"
 }
 ```
