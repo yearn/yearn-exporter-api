@@ -1,0 +1,26 @@
+name: 🎻 Deploy to staging
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: Git ref
+        required: true
+        default: main
+
+jobs:
+  build_docker:
+    uses: yearn/yearn-exporter-api/.github/workflows/build-push.yml@main
+    with:
+      git_ref: ${{ github.event.inputs.git_ref }}
+  deployment:
+    runs-on: ubuntu-latest
+    needs: build_docker
+    steps:
+      - name: Deploy to staging
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USERNAME }}
+          key: ${{ secrets.STAGING_KEY }}
+          port: ${{ secrets.STAGING_PORT }}
+          script: cd yearn-exporter-api && git pull && ./deploy.sh ${{ github.event.inputs.git_ref }}
