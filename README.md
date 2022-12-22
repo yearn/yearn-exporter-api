@@ -2,10 +2,10 @@
 Light-weight API in front of [yearn.vision](https://yearn.vision) that makes some data available for external sites.
 
 ## Usage
-Start the API with `docker-compose up` or `docker-compose up -d` for detached mode. This will expose it at `http://localhost:5000`.
+Start the API with `make up`.This will expose it at `http://localhost:5000`.
 
 ## Rebuild
-Rebuild the docker container with `docker build -t ghcr.io/yearn/yearn-exporter-api .`
+Rebuild the docker container with `make build`
 
 ## Configuration
 You can export the following environment variables if you want to override the defaults:
