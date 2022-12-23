@@ -16,6 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_docker
     steps:
+      - name: Extract docker tag
+        id: extract_values
+        run: |
+          GIT_REF=${{ github.event.inputs.git_ref }}
+          DOCKER_TAG=$([[ ${GIT_REF} == 'main' ]] && echo 'latest' || echo ${GIT_REF})
+          echo "docker_tag=${DOCKER_TAG}" >> $GITHUB_OUTPUT
       - name: Deploy to staging
         uses: appleboy/ssh-action@master
         with:
@@ -23,4 +29,4 @@ jobs:
           username: ${{ secrets.STAGING_USERNAME }}
           key: ${{ secrets.STAGING_KEY }}
           port: ${{ secrets.STAGING_PORT }}
-          script: cd yearn-exporter-api && git pull && ./deploy.sh ${{ github.event.inputs.git_ref }}
+          script: cd yearn-exporter-api && git pull && ./deploy.sh ${{ steps.extract_values.outputs.docker_tag }}
