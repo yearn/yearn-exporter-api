@@ -2,10 +2,12 @@
 Light-weight API in front of [yearn.vision](https://yearn.vision) that makes some data available for external sites.
 
 ## Usage
-Start the API with `make up`.This will expose it at `http://localhost:5000`.
+Start the API with `make build && make up`. This will expose it at `http://localhost:5000`.
 
-## Rebuild
-Rebuild the docker container with `make build`
+
+## Make commands
+All these are prefaced with `make`.
+- `build`, `up`, `down`, `destroy`, `stop`, `restart`, `ps`
 
 ## Configuration
 You can export the following environment variables if you want to override the defaults:
