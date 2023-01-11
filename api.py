@@ -59,3 +59,7 @@ def _get_ts():
             return ts_int
     except ValueError:
         raise ValueError("Wrong request param specified (ts must be an int).")
+
+def create_app():
+    return app
+
