@@ -54,7 +54,11 @@ def get_for(key, ts, unit):
 
 
 def _ds_parse_value(response):
-    data = response['results']['A']['frames'][0]['data']
+    frames = response['results']['A']['frames']
+    if len(frames) == 0:
+      return 0
+
+    data = frames[0]['data']
     values = data['values'][1]
     value = 0
     for i in range(len(values)-1, -1, -1):
