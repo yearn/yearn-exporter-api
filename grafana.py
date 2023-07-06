@@ -15,9 +15,9 @@ QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl
 # Sum of v1 vaults + sum of v2 vaults + sum of earn - sum of v2 vault funds deposited into other v2 vaults + veCRV holdings
 QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}))"""
 
-QUERY_OPT_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPT\"}))"""
+QUERY_OPT_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPTI\"}))"""
 
-QUERY_ARB_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARRB\"}))"""
+QUERY_ARB_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARB\"}))"""
 
 QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPT_TVL + " + " + QUERY_ARB_TVL
 
