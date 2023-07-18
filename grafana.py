@@ -87,7 +87,8 @@ def _ds_query(query, ts):
             {
                 "expr": query,
                 "utcOffsetSec": 0,
-                "datasourceId": 1
+                "datasourceId": 1,
+                "maxDataPoints": 10
             }
         ],
         "from": str(from_millis), "to": str(to_millis)
