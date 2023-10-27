@@ -9,17 +9,17 @@ logging.basicConfig(level=logging.WARN)
 
 # Explanation of query
 # sum v2 vaults does not subtract delegated deposits
-QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"}))"""
+QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"})) or vector(0)"""
 
-QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}))"""
+QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"})) or vector(0)"""
 
 QUERY_styETH_TVL = """yeth{product=\"st-yETH\",param=\"tvl\"}"""
 
-QUERY_OPTI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPTI\"}))"""
+QUERY_OPTI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPTI\"})) or vector(0)"""
 
-QUERY_BASE_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"BASE\"}))"""
+QUERY_BASE_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"BASE\"})) or vector(0)"""
 
-QUERY_ARBI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARB\"}))"""
+QUERY_ARBI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARB\"})) or vector(0)"""
 
 QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPTI_TVL + " + " + QUERY_ARBI_TVL + " + " + QUERY_BASE_TVL + " + " + QUERY_styETH_TVL
 
