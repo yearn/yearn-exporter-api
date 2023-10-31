@@ -40,10 +40,11 @@ $ curl localhost:5000/tvl/eth
 }
 ```
 supported networks are:
-- `ETH`
-- `FTM`
-- `OPI`
-- `ARB`
+- `eth`
+- `ftm`
+- `opt`
+- `arb`
+- `base`
 
 ### `/tvl/total`
 returns the sum of the TVLs of all networks:

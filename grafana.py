@@ -9,17 +9,19 @@ logging.basicConfig(level=logging.WARN)
 
 # Explanation of query
 # sum v2 vaults does not subtract delegated deposits
-QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"}))"""
+QUERY_FTM_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"})) or vector(0)"""
 
-# Explanation of query everything below is only on eth
-# Sum of v1 vaults + sum of v2 vaults + sum of earn - sum of v2 vault funds deposited into other v2 vaults + veCRV holdings
-QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}))"""
+QUERY_ETH_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"})) or vector(0)"""
 
-QUERY_OPT_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPTI\"}))"""
+QUERY_styETH_TVL = """yeth{product=\"st-yETH\",param=\"tvl\"}"""
 
-QUERY_ARB_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARB\"}))"""
+QUERY_OPTI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"OPTI\"})) or vector(0)"""
 
-QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPT_TVL + " + " + QUERY_ARB_TVL
+QUERY_BASE_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"BASE\"})) or vector(0)"""
+
+QUERY_ARBI_TVL = """sum(sum by (vault, version, address) (yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ARB\"})) or vector(0)"""
+
+QUERY_TOTAL_TVL = QUERY_ETH_TVL + " + " + QUERY_FTM_TVL + " + " + QUERY_OPTI_TVL + " + " + QUERY_ARBI_TVL + " + " + QUERY_BASE_TVL + " + " + QUERY_styETH_TVL
 
 # Partner queries
 # Count of unique entries in the partner field
@@ -35,8 +37,10 @@ queries = {
     'tvl_total': QUERY_TOTAL_TVL,
     'tvl_eth': QUERY_ETH_TVL,
     'tvl_ftm': QUERY_FTM_TVL,
-    'tvl_opt': QUERY_OPT_TVL,
-    'tvl_arb': QUERY_ARB_TVL,
+    'tvl_opti': QUERY_OPTI_TVL,
+    'tvl_arbi': QUERY_ARBI_TVL,
+    'tvl_base': QUERY_BASE_TVL,
+    'tvl_styETH': QUERY_styETH_TVL,  
     'partners_count': QUERY_PAR_CNT,
     'partners_total': QUERY_PAR_TOTAL,
 }
