@@ -6,7 +6,7 @@ from grafana import get_for, get_partners_for
 app = Flask(__name__)
 CORS(app)
 
-NETWORKS = ['eth', 'ftm', 'opti', 'arbi', 'base']
+NETWORKS = ['eth', 'ftm', 'opt', 'arb', 'base']
 
 UNIT_USD = 'USD'
 

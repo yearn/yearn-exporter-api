@@ -42,8 +42,8 @@ $ curl localhost:5000/tvl/eth
 supported networks are:
 - `eth`
 - `ftm`
-- `opti`
-- `arbi`
+- `opt`
+- `arb`
 - `base`
 
 ### `/tvl/total`
